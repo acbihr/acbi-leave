@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ACBi — แบบฟอร์มขอลางาน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+  :root{
+    --ink:#22292E;
+    --ink-soft:#5B6670;
+    --pine:#10322E;
+    --pine-mid:#2E5A52;
+    --brass:#A98545;
+    --paper:#F6F5F1;
+    --card:#FFFFFF;
+    --line:#E4E2DB;
+    --ok:#2E7D5B;
+    --warn:#B4463A;
+    --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    font-family:'Sarabun',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    font-size:15px;
+    line-height:1.55;
+    padding-bottom:40px;
+  }
+  /* ---------- header ---------- */
+  header{
+    background:var(--pine);
+    color:#F3EFE6;
+    padding:20px 20px 56px;
+  }
+  .brand{
+    font-family:'Prompt',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#C9BD9F;
+  }
+  header h1{
+    font-family:'Prompt',sans-serif;
+    font-weight:600;
+    font-size:24px;
+    margin-top:6px;
+  }
+  .profile{
+    display:flex;align-items:center;gap:12px;
+    margin-top:16px;
+  }
+  .profile img{
+    width:44px;height:44px;border-radius:50%;
+    border:2px solid rgba(255,255,255,.35);
+    background:#2E5A52;
+  }
+  .profile .p-name{font-family:'Prompt',sans-serif;font-weight:500;font-size:15px}
+  .profile .p-sub{font-size:12px;color:#B9C6BF}
+
+  /* ---------- card ---------- */
+  main{
+    margin:-36px 14px 0;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 18px;
+    box-shadow:0 6px 24px rgba(16,50,46,.08);
+  }
+  .section-label{
+    font-family:'Prompt',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    color:var(--pine-mid);
+    letter-spacing:.04em;
+    margin:22px 0 10px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .section-label:first-child{margin-top:0}
+  .section-label::after{content:'';flex:1;height:1px;background:var(--line)}
+
+  /* leave type chips */
+  .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .chip{
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    background:#FCFBF9;
+    padding:12px 10px;
+    text-align:center;
+    font-family:'Sarabun',sans-serif;
+    font-weight:500;
+    font-size:14px;
+    color:var(--ink);
+    cursor:pointer;
+    transition:border-color .15s, background .15s;
+  }
+  .chip .ic{font-size:20px;display:block;margin-bottom:2px}
+  .chip.active{
+    border-color:var(--pine-mid);
+    background:#EDF3F0;
+    color:var(--pine);
+    font-weight:600;
+  }
+
+  label.f{
+    display:block;
+    font-weight:600;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:14px 0 5px;
+  }
+  input[type=text],input[type=date],select,textarea{
+    width:100%;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:11px 12px;
+    font-family:'Sarabun',sans-serif;
+    font-size:15px;
+    color:var(--ink);
+    background:#FCFBF9;
+    outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--pine-mid)}
+  textarea{resize:vertical;min-height:76px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+  /* duration segmented */
+  .seg{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;margin-top:2px}
+  .seg button{
+    flex:1;border:none;background:#FCFBF9;padding:10px 4px;
+    font-family:'Sarabun',sans-serif;font-size:13.5px;font-weight:500;color:var(--ink-soft);cursor:pointer;
+  }
+  .seg button.active{background:var(--pine-mid);color:#fff;font-weight:600}
+
+  /* live summary strip */
+  .summary{
+    margin-top:18px;
+    background:var(--pine);
+    color:#F3EFE6;
+    border-radius:12px;
+    padding:14px 16px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .summary .s-label{font-size:12px;color:#B9C6BF}
+  .summary .s-days{
+    font-family:'Prompt',sans-serif;font-weight:700;font-size:26px;line-height:1;
+  }
+  .summary .s-days span{font-size:13px;font-weight:500;margin-left:4px}
+  .summary .s-range{font-size:12.5px;text-align:right;color:#D8D2C2}
+
+  .btn{
+    width:100%;
+    margin-top:18px;
+    border:none;
+    border-radius:12px;
+    background:var(--brass);
+    color:#fff;
+    font-family:'Prompt',sans-serif;
+    font-weight:600;
+    font-size:16px;
+    padding:15px;
+    cursor:pointer;
+  }
+  .btn:disabled{opacity:.55}
+  .hint{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:10px}
+
+  /* result screens */
+  .result{display:none;text-align:center;padding:36px 20px}
+  .result .big{font-size:52px}
+  .result h2{font-family:'Prompt',sans-serif;font-weight:600;font-size:20px;margin:10px 0 6px}
+  .result p{color:var(--ink-soft);font-size:14px}
+  .result .rid{
+    display:inline-block;margin-top:14px;
+    font-family:'Prompt',sans-serif;font-weight:600;
+    background:#EDF3F0;color:var(--pine);
+    border-radius:8px;padding:8px 16px;font-size:15px;
+  }
+  .err{color:var(--warn)}
+
+  /* loading overlay */
+  #loading{
+    display:none;position:fixed;inset:0;background:rgba(246,245,241,.85);
+    z-index:50;justify-content:center;align-items:center;flex-direction:column;gap:12px;
+  }
+  .spin{
+    width:34px;height:34px;border-radius:50%;
+    border:3px solid var(--line);border-top-color:var(--pine-mid);
+    animation:sp .8s linear infinite;
+  }
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion: reduce){.spin{animation:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">ACBi &middot; ระบบลางาน</div>
+  <h1>แบบฟอร์มขอลางาน</h1>
+  <div class="profile">
+    <img id="pfPic" src="" alt="">
+    <div>
+      <div class="p-name" id="pfName">กำลังเชื่อมต่อ LINE…</div>
+      <div class="p-sub" id="pfSub">Leave Request</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="card" id="formCard">
+
+    <div class="section-label">ประเภทการลา</div>
+    <div class="chips" id="chips">
+      <div class="chip" data-v="ลาป่วย"><span class="ic">🤒</span>ลาป่วย</div>
+      <div class="chip" data-v="ลากิจ"><span class="ic">📋</span>ลากิจ</div>
+      <div class="chip" data-v="ลาพักร้อน"><span class="ic">🏖️</span>ลาพักร้อน</div>
+      <div class="chip" data-v="อื่นๆ"><span class="ic">✏️</span>อื่นๆ</div>
+    </div>
+
+    <label class="f">แผนก / ฝ่าย</label>
+    <select id="dept">
+      <option value="">— เลือกแผนก —</option>
+      <option>สำนักงาน / บริหาร</option>
+      <option>บัญชี-การเงิน</option>
+      <option>จัดซื้อ</option>
+      <option>ฝ่ายโครงการ (Site)</option>
+      <option>เขียนแบบ / Drawing</option>
+      <option>โรงงาน / Production</option>
+      <option>QS / Contract</option>
+      <option>HR / ธุรการ</option>
+      <option>อื่นๆ</option>
+    </select>
+
+    <div class="section-label">ช่วงเวลาที่ลา</div>
+    <div class="seg" id="seg">
+      <button type="button" data-v="เต็มวัน" class="active">เต็มวัน</button>
+      <button type="button" data-v="ครึ่งวันเช้า">ครึ่งวันเช้า</button>
+      <button type="button" data-v="ครึ่งวันบ่าย">ครึ่งวันบ่าย</button>
+    </div>
+
+    <div class="row2">
+      <div>
+        <label class="f">วันที่เริ่มลา</label>
+        <input type="date" id="dateStart">
+      </div>
+      <div>
+        <label class="f">ถึงวันที่</label>
+        <input type="date" id="dateEnd">
+      </div>
+    </div>
+
+    <label class="f">เหตุผลการลา</label>
+    <textarea id="reason" placeholder="ระบุเหตุผล เช่น พบแพทย์ / ธุระครอบครัว"></textarea>
+
+    <label class="f">ผู้รับผิดชอบงานแทน (ถ้ามี)</label>
+    <input type="text" id="delegate" placeholder="ชื่อผู้ดูแลงานระหว่างลา">
+
+    <div class="summary">
+      <div>
+        <div class="s-label">จำนวนวันลา</div>
+        <div class="s-days" id="sumDays">–<span>วัน</span></div>
+      </div>
+      <div class="s-range" id="sumRange">ยังไม่ได้เลือกวันที่</div>
+    </div>
+
+    <button class="btn" id="btnSubmit">ส่งคำขอลางาน</button>
+    <div class="hint">คำขอจะถูกส่งให้ผู้อนุมัติทาง LINE ทันที และแจ้งผลกลับอัตโนมัติ</div>
+  </div>
+
+  <!-- success -->
+  <div class="card result" id="okCard">
+    <div class="big">✅</div>
+    <h2>ส่งคำขอเรียบร้อย</h2>
+    <p>ระบบส่งคำขอให้ผู้อนุมัติแล้ว<br>เมื่อมีการอนุมัติ คุณจะได้รับแจ้งทาง LINE</p>
+    <div class="rid" id="okId"></div>
+  </div>
+
+  <!-- error -->
+  <div class="card result" id="errCard">
+    <div class="big">⚠️</div>
+    <h2 class="err">ส่งคำขอไม่สำเร็จ</h2>
+    <p id="errMsg">กรุณาลองใหม่อีกครั้ง</p>
+    <button class="btn" onclick="location.reload()">ลองอีกครั้ง</button>
+  </div>
+</main>
+
+<div id="loading"><div class="spin"></div><div style="font-size:13px;color:var(--ink-soft)">กำลังส่งคำขอ…</div></div>
+
+<script>
+/* ================= CONFIG — แก้ 2 ค่านี้ ================= */
+const LIFF_ID = "YOUR_LIFF_ID";               // เช่น 2001234567-AbCdEfGh
+const GAS_URL = "YOUR_GAS_WEBAPP_URL";        // URL จาก Deploy > Web app
+/* ======================================================== */
+
+let profile = null;
+let leaveType = "";
+let duration = "เต็มวัน";
+
+// ---- LIFF init ----
+(async () => {
+  try {
+    await liff.init({ liffId: LIFF_ID });
+    if (!liff.isLoggedIn()) { liff.login(); return; }
+    profile = await liff.getProfile();
+    document.getElementById('pfName').textContent = profile.displayName;
+    document.getElementById('pfPic').src = profile.pictureUrl || "";
+  } catch (e) {
+    document.getElementById('pfName').textContent = "เปิดจากแอป LINE เท่านั้น";
+  }
+})();
+
+// ---- leave type chips ----
+document.querySelectorAll('#chips .chip').forEach(c => {
+  c.onclick = () => {
+    document.querySelectorAll('#chips .chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    leaveType = c.dataset.v;
+  };
+});
+
+// ---- duration segmented ----
+document.querySelectorAll('#seg button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#seg button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    duration = b.dataset.v;
+    if (duration !== "เต็มวัน") {
+      document.getElementById('dateEnd').value = document.getElementById('dateStart').value;
+    }
+    calcDays();
+  };
+});
+
+// ---- date logic ----
+const dS = document.getElementById('dateStart');
+const dE = document.getElementById('dateEnd');
+const today = new Date().toISOString().slice(0,10);
+dS.value = today; dE.value = today;
+
+dS.onchange = () => {
+  if (!dE.value || dE.value < dS.value || duration !== "เต็มวัน") dE.value = dS.value;
+  calcDays();
+};
+dE.onchange = () => {
+  if (dE.value < dS.value) dE.value = dS.value;
+  if (duration !== "เต็มวัน") dE.value = dS.value;
+  calcDays();
+};
+
+function calcDays(){
+  const el = document.getElementById('sumDays');
+  const rg = document.getElementById('sumRange');
+  if (!dS.value || !dE.value){ el.innerHTML = '–<span>วัน</span>'; rg.textContent='ยังไม่ได้เลือกวันที่'; return 0; }
+  let days;
+  if (duration !== "เต็มวัน") {
+    days = 0.5;
+  } else {
+    days = Math.round((new Date(dE.value) - new Date(dS.value)) / 86400000) + 1;
+  }
+  el.innerHTML = days + '<span>วัน</span>';
+  const f = d => new Date(d).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+  rg.textContent = dS.value === dE.value ? f(dS.value) + (duration!=="เต็มวัน" ? " ("+duration+")" : "") : f(dS.value) + " → " + f(dE.value);
+  return days;
+}
+calcDays();
+
+// ---- submit ----
+document.getElementById('btnSubmit').onclick = async () => {
+  const dept = document.getElementById('dept').value;
+  const reason = document.getElementById('reason').value.trim();
+  const days = calcDays();
+
+  if (!leaveType) return alert("กรุณาเลือกประเภทการลา");
+  if (!dept)      return alert("กรุณาเลือกแผนก");
+  if (!dS.value || !dE.value || !days) return alert("กรุณาเลือกวันที่ลา");
+  if (!reason)    return alert("กรุณาระบุเหตุผลการลา");
+  if (!profile)   return alert("ไม่พบข้อมูล LINE กรุณาเปิดผ่านแอป LINE");
+
+  const payload = {
+    action: "submit",
+    userId: profile.userId,
+    name: profile.displayName,
+    picture: profile.pictureUrl || "",
+    dept, leaveType, duration,
+    dateStart: dS.value,
+    dateEnd: dE.value,
+    days,
+    reason,
+    delegate: document.getElementById('delegate').value.trim()
+  };
+
+  document.getElementById('loading').style.display = 'flex';
+  try {
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" }, // หลีกเลี่ยง CORS preflight
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    document.getElementById('loading').style.display = 'none';
+    if (data.status === "ok") {
+      document.getElementById('formCard').style.display = 'none';
+      document.getElementById('okCard').style.display = 'block';
+      document.getElementById('okId').textContent = data.requestId;
+      setTimeout(() => { if (liff.isInClient()) liff.closeWindow(); }, 4000);
+    } else {
+      throw new Error(data.message || "unknown");
+    }
+  } catch (err) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('errCard').style.display = 'block';
+    document.getElementById('errMsg').textContent = "เกิดข้อผิดพลาด: " + err.message;
+  }
+};
+</script>
+</body>
+</html>
